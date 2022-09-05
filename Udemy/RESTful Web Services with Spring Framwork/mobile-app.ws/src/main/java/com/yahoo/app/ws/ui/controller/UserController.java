@@ -29,7 +29,7 @@ public class UserController {
 	@PostMapping
 	public String createUser()
 	{
-		return "create yser was called";
+		return "create user was called";
 	}
 
 	
