@@ -1,8 +1,11 @@
 package com.yahoo.app.ws.ui.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,12 +54,11 @@ public class UserController {
 			produces = { 									//can produce json & xml.
 					MediaType.APPLICATION_XML_VALUE, 
 					MediaType.APPLICATION_JSON_VALUE }) 
-	//@RequestBody lets this method read info coming in from the HTTP request body.
-	//Accepts object of type UserDetailsRequestModel as an argument, assigns it to 'userDetails'.
-	public ResponseEntity<UserRest> createUser(@RequestBody UserDetailsRequestModel userDetails)
+	//@Valid	Enables validation for the beans.
+	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails)
 	{
 	
-		//create a returnValue object, and set its details.
+
 		UserRest returnValue = new UserRest();					
 		returnValue.setEmail(userDetails.getEmail());					
 		returnValue.setFirstName(userDetails.getFirstName());
