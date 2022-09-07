@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yahoo.app.ws.exceptions.UserServiceException;
 import com.yahoo.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.yahoo.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.yahoo.app.ws.ui.model.response.UserRest;
@@ -43,6 +44,9 @@ public class UserController {
 			)																
 	public ResponseEntity<UserRest> getUser(@PathVariable String userId)		
 	{			
+		if(true)
+			throw new UserServiceException("A user service exception is thrown");
+		
 		//Checks if the request contains a userId that exists in 'users' HashMap and returns the user details and 'OK' if true.
 		//If false, returns NO_CONTENT message.
 		if(users.containsKey(userId))
@@ -61,7 +65,7 @@ public class UserController {
 			MediaType.APPLICATION_XML_VALUE, 
 			MediaType.APPLICATION_JSON_VALUE },
 			produces = { 									//can produce json & xml.
-					MediaType.APPLICATION_XML_VALUE, 
+//					MediaType.APPLICATION_XML_VALUE, 
 					MediaType.APPLICATION_JSON_VALUE }) 
 
 	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails)
@@ -91,7 +95,7 @@ public class UserController {
 			MediaType.APPLICATION_XML_VALUE, 
 			MediaType.APPLICATION_JSON_VALUE },
 			produces = { 									//can produce json & xml.
-			MediaType.APPLICATION_XML_VALUE, 
+//			MediaType.APPLICATION_XML_VALUE, 
 			MediaType.APPLICATION_JSON_VALUE })
 	//method gets arguments from HTTP request: userId and userDetails 
 	public UserRest updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDetailsRequestModel userDetails)
