@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yahoo.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.yahoo.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.yahoo.app.ws.ui.model.response.UserRest;
 
@@ -85,17 +86,33 @@ public class UserController {
 	}
 
 	
-	@PutMapping
-	public String updateUser()
+	@PutMapping(path="/{userId}",							//can receive userId as a path paramater.
+			consumes = { 									//can consume json & xml.
+			MediaType.APPLICATION_XML_VALUE, 
+			MediaType.APPLICATION_JSON_VALUE },
+			produces = { 									//can produce json & xml.
+			MediaType.APPLICATION_XML_VALUE, 
+			MediaType.APPLICATION_JSON_VALUE })
+	//method gets arguments from HTTP request: userId and userDetails 
+	public UserRest updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDetailsRequestModel userDetails)
 	{
-		return "update user was called";
+		UserRest storedUserDetails = users.get(userId);
+		storedUserDetails.setFirstName(userDetails.getFirstName()); 		//update user first name, using info from body of request.
+		storedUserDetails.setLastName(userDetails.getLastName());			//update last name...
+		
+		//after details have been updated, add user to Map 'users'.
+		users.put(userId, storedUserDetails);		//key= user id, value= object holding user details.
+		
+		return storedUserDetails;
 	}
 	
 	
-	@DeleteMapping
-	public String deleteUser()
-	{
-		return "delete user was called";
+	@DeleteMapping(path="/{id}")			//maps this method to the DELETE HTTP request, an path '/< user id>'
+	
+	public ResponseEntity<Void> deleteUser(@PathVariable String id)	//Allows method to read the above path variable from the
+	{													// HTTP request (eg. localhost:8080/users/0cc576ba-adc4-45b3-a322-e7db92553f43).
+		users.remove(id);								//removes user from HashMap. (user id = key)
+		return ResponseEntity.noContent().build();		//return '204 No Content' status message.
 	}
 	
 }
