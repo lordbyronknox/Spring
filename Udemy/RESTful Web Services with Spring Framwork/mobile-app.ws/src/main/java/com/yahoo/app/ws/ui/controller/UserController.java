@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import com.yahoo.app.ws.exceptions.UserServiceException;
 import com.yahoo.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.yahoo.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.yahoo.app.ws.ui.model.response.UserRest;
+import com.yahoo.app.ws.userservice.UserService;
 
 @RestController
 @RequestMapping("/users")	
@@ -30,6 +32,11 @@ public class UserController {
 	
 	//Initialize a Map, with String type key, and UserRest type value.
 	Map<String, UserRest> users;
+	
+	//@Autowire creates an instance of 'userService' and injects it into this class,
+	// so that both classes can act independently of each other.
+	@Autowired
+	UserService userService;
 	
 	@GetMapping									
 	public String getUsers(@RequestParam(value="page", defaultValue="1") int page, @RequestParam(value="limit", defaultValue="50") int limit)		
@@ -70,22 +77,11 @@ public class UserController {
 
 	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails)
 	{
+		
+		//body moved to 'UserServiceImpl'
 
-		UserRest returnValue = new UserRest();					
-		returnValue.setEmail(userDetails.getEmail());					
-		returnValue.setFirstName(userDetails.getFirstName());
-		returnValue.setLastName(userDetails.getLastName());
-		
-		//generate a random user ID
-		String userId = UUID.randomUUID().toString();
-		//Assign the 'userId' value to the 'returnValue' object's userId property.
-		returnValue.setUserId(userId);
-		
-		//if there are no users, create a HashMap,  and add the user to it.
-		if (users == null) users = new HashMap<>();		
-		users.put(userId, returnValue);
-		
-		
+		//userServer object created without using the 'new' keyword, due to injection.
+		UserRest returnValue = userService.createUser(userDetails);
 		return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
 	}
 
