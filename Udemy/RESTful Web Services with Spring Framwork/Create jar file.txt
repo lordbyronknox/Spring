@@ -1,0 +1,36 @@
+restful-web-services-with-spring-framework-a-quick-start
+
+Section 11: Standalone Application
+(Create a jar file of your project that can be run outside of the IDE)
+
+* In STS, right click the project folder... and select PROPERTIES.
+
+* Select 'RESEOURCES', and copy the 'Location' path
+  eg. C:\Users\byron\Desktop\Spring\Udemy\RESTful Web Services with Spring Framwork\mobile-app.ws
+
+* Open CMD... type: cd "<path that you copied>"
+  This will change the directory to your project.
+
+* mvn install
+  This will compile and package your project into a jar file.
+
+* To run the jar file:
+  java -jar target/mobile-app-ws-0.0.1-SNAPSHOT.jar
+
+
+-----------------------------------------------------
+Create JAR file using Spring Tool Suit:
+
+* right click project folder
+* Run AS -> Maven build...
+* By 'Goals' enter 'package'	(no ' ')
+* click Run.
+
+the jar file is placed in a folder called 'Target'. 
+in CMD... cd into the target folder and type: java -jar mobile-app.ws-0.0.1-SNAPSHOT.jar
+This will start your app.
+
+
+
+
+	
