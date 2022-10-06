@@ -6,10 +6,9 @@
 	import javax.persistence.Table;
 	
 	
-	//Entity 
-	// and
+	//Entity (in this case) is the table.
 	@Entity  
-	@Table(name = "user")
+	@Table(name = "user")		//@Table name defaults to the class name ('User'). To specify a different name use (name = "<name>")
 	public class User {
 	
 		@Id
@@ -33,6 +32,7 @@
 	
 		@Column(name = "SSN", length = 50, nullable = false, unique = true)
 		private String ssn;
+		
 	
 		// No Argument Constructor
 		public User() {
