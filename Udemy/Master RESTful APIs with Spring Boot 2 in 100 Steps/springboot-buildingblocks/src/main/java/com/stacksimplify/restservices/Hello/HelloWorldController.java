@@ -3,17 +3,17 @@ package com.stacksimplify.restservices.Hello;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-//controller
+//Controller
 @RestController
 public class HelloWorldController {
 
-	//simple GET method. 
-	//URI/path: /helloworld
-	//@RequestMapping(method = RequestMethod.GET, path = "/helloworld")		//this line can be replaced with 
-	@GetMapping("/helloworld")
+	//Simple Method
+	//URI - /helloworld
+	//GET 
+	//@RequestMapping(method = RequestMethod.GET, path = "/helloworld")
+	@GetMapping("/helloworld1")
 	public String helloWorld() {
-		return "Hello World";
+		return "Hello World1";
 	}
 	
 	@GetMapping("/helloworld-bean")

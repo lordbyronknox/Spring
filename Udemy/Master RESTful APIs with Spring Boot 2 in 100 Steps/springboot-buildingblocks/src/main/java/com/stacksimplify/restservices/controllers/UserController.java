@@ -4,10 +4,14 @@ import java.util.List;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +24,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stacksimplify.restservices.entities.User;
 import com.stacksimplify.restservices.exceptions.UserExistsException;
+import com.stacksimplify.restservices.exceptions.UserNameNotFoundException;
 import com.stacksimplify.restservices.exceptions.UserNotFoundException;
 import com.stacksimplify.restservices.services.UserService;
 
 //Controller: @RestController to tell Spring the type of controller it is
 @RestController
+@Validated													//add @Validated for constraints (eg. @Min(1) )
 public class UserController {
 	
 	//Autowire the UserService (creates an instance of the UserService class (called 'userService') so 
@@ -44,8 +50,8 @@ public class UserController {
 	//@RequestBody Annotation	- gets data from body.
 	//@PostMapping Annotation	- maps this method to the /users url extension.
 	@PostMapping("/users")
-	public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder builder) {	//change to void, add UriComponentsbuilder to args
-		try {
+	public ResponseEntity<Void> createUser(@Valid @RequestBody User user, UriComponentsBuilder builder) {	//@Valid: Validates the request body (prevents you
+		try {																								//from getting the 500 error.
 			userService.createUser(user);															//create user
 			//Header = header tab on postman
 			HttpHeaders headers = new HttpHeaders();												//create HttpHeaders object
@@ -60,7 +66,7 @@ public class UserController {
 	
 	//getUserById
 	@GetMapping("/users/{id}")
-	public Optional<User> getUserById(@PathVariable("id") Long id){
+	public Optional<User> getUserById(@PathVariable("id") @Min(1) Long id){		//add @Min(1) constraint.
 		
 		try {
 			return userService.getUserById(id);
@@ -94,7 +100,10 @@ public class UserController {
 	
 	//getUserByUsername
 	@GetMapping("/users/byusername/{username}")
-	public User getUserByUsername(@PathVariable("username") String username) {
-		return userService.getUserByUsername(username);
+	public User getUserByUsername(@PathVariable("username") String username) throws UserNameNotFoundException { //add throws.
+		User user =  userService.getUserByUsername(username);													//get username and
+		if(user == null)																						// check if it exists.
+			throw new UserNameNotFoundException("Username: '" + username + "' not found in User repository.");  //Throw exception if it doesnt,
+		return user;																							//return the username if it does.
 	}
 }
