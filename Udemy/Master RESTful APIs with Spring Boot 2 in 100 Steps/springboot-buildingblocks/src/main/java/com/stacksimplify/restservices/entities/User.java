@@ -1,16 +1,19 @@
 	package com.stacksimplify.restservices.entities;	
-	import javax.persistence.Column;
+	import java.util.List;
+
+import javax.persistence.Column;
 	import javax.persistence.Entity;
 	import javax.persistence.GeneratedValue;
 	import javax.persistence.Id;
-	import javax.persistence.Table;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 	import javax.validation.constraints.NotEmpty;
 	import javax.validation.constraints.Size;
 	
 	
 	//Entity (in this case) is the table.
 	@Entity  
-	@Table(name = "user")		//@Table name defaults to the class name ('User'). To specify a different name use (name = "<name>")
+	@Table(name = "users")		//@Table name defaults to the class name ('User'). To specify a different name use (name = "<name>")
 	public class User {
 	
 		@Id
@@ -36,6 +39,9 @@
 	
 		@Column(name = "SSN", length = 50, nullable = false, unique = true)
 		private String ssn;
+		
+		@OneToMany(mappedBy="user")										//one user can have multiple orders (one-To-Many)
+		private List<Order> orders;										//mappedBy="user": maps orders to the user field in the User entity.
 		
 	
 		// No Argument Constructor
@@ -110,11 +116,24 @@
 			this.ssn = ssn;
 		}
 	
+		
+		//getters and setters for Orders
+		public List<Order> getOrders() {
+			return orders;
+		}
+
+		public void setOrders(List<Order> orders) {
+			this.orders = orders;
+		}
+		
+		
 		// To String
 		@Override
 		public String toString() {
 			return "User [id=" + id + ", username=" + username + ", firstname=" + firstname + ", lastname=" + lastname
 					+ ", email=" + email + ", role=" + role + ", ssn=" + ssn + "]";
 		}
+
+		
 		
 	}
