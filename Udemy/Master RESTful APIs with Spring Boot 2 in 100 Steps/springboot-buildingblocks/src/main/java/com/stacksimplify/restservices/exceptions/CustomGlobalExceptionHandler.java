@@ -76,7 +76,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 			CustomErrorDetails customErrorDetails = new CustomErrorDetails(
 					new Date(),
 					ex.getMessage(), 
-					request.getDescription(false)
+					request.getDescription(false));
 					return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);	
 		}
 		

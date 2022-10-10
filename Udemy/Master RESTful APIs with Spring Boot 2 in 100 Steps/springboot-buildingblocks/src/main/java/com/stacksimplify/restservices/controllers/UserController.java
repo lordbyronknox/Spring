@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,6 +32,7 @@ import com.stacksimplify.restservices.services.UserService;
 //Controller: @RestController to tell Spring the type of controller it is
 @RestController
 @Validated													//add @Validated for constraints (eg. @Min(1) )
+@RequestMapping(value = "/users")							//@RequestMapping... for the class replaces the need for the path in @GetMapping etc.
 public class UserController {
 	
 	//Autowire the UserService (creates an instance of the UserService class (called 'userService') so 
@@ -39,7 +41,7 @@ public class UserController {
 	private UserService userService;
 	
 	//getAllUsers Method
-	@GetMapping("/users")
+	@GetMapping
 	public List<User> getAllUsers() {
 		
 		return userService.getAllUsers();
@@ -49,7 +51,7 @@ public class UserController {
 	//Create User Method
 	//@RequestBody Annotation	- gets data from body.
 	//@PostMapping Annotation	- maps this method to the /users url extension.
-	@PostMapping("/users")
+	@PostMapping
 	public ResponseEntity<Void> createUser(@Valid @RequestBody User user, UriComponentsBuilder builder) {	//@Valid: Validates the request body (prevents you
 		try {																								//from getting the 500 error.
 			userService.createUser(user);															//create user
@@ -65,7 +67,7 @@ public class UserController {
 	
 	
 	//getUserById
-	@GetMapping("/users/{id}")
+	@GetMapping("/{id}")					//remove path (/users)
 	public Optional<User> getUserById(@PathVariable("id") @Min(1) Long id){		//add @Min(1) constraint.
 		
 		try {
@@ -80,7 +82,7 @@ public class UserController {
 	}
 	
 	//updateUserById
-	@PutMapping("/users/{id}")
+	@PutMapping("/{id}")							//remove path (/users)
 	public User updateUserById(@PathVariable("id") Long id, @RequestBody User user) {
 		try {																		//add try/catch
 			return userService.updateUserById(id, user);
@@ -92,14 +94,14 @@ public class UserController {
 	
 	
 	//deleteUserById
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping("/{id}")						//remove path (/users)
 	public void deleteUserById(@PathVariable("id") Long id) {
 		userService.deleteUserById(id);
 	}
 	
 	
 	//getUserByUsername
-	@GetMapping("/users/byusername/{username}")
+	@GetMapping("/byusername/{username}")		//remove path (/users)
 	public User getUserByUsername(@PathVariable("username") String username) throws UserNameNotFoundException { //add throws.
 		User user =  userService.getUserByUsername(username);													//get username and
 		if(user == null)																						// check if it exists.
