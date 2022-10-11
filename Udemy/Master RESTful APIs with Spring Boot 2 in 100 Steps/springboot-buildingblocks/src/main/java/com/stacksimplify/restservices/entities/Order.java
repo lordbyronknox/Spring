@@ -8,10 +8,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity												//@Entity, as this class creates an entity (table).
 @Table(name="orders")
-public class Order {
+public class Order extends RepresentationModel<Order>{	//add 'extends RepresentationModel'
 	
 	@Id												//set as primary key
 	@GeneratedValue									//auto-generate IDs

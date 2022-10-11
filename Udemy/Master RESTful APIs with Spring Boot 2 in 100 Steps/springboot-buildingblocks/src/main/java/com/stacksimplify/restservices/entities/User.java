@@ -2,19 +2,21 @@
 	import java.util.List;
 
 import javax.persistence.Column;
-	import javax.persistence.Entity;
-	import javax.persistence.GeneratedValue;
-	import javax.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-	import javax.validation.constraints.NotEmpty;
-	import javax.validation.constraints.Size;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
+import org.springframework.hateoas.RepresentationModel;
 	
 	
 	//Entity (in this case) is the table.
 	@Entity  
 	@Table(name = "users")		//@Table name defaults to the class name ('User'). To specify a different name use (name = "<name>")
-	public class User {
+	public class User extends RepresentationModel<User> {
 	
 		@Id
 		@GeneratedValue
