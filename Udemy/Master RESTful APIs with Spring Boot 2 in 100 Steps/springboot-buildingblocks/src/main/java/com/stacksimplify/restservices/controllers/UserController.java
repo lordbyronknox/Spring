@@ -57,7 +57,7 @@ public class UserController {
 			userService.createUser(user);															//create user
 			//Header = header tab on postman
 			HttpHeaders headers = new HttpHeaders();												//create HttpHeaders object
-			headers.setLocation(builder.path("/users/{id}").buildAndExpand(user.getId()).toUri());	//sets location  of object (eg. /users/1)
+			headers.setLocation(builder.path("/users/{id}").buildAndExpand(user.getUserid()).toUri());	//sets location  of object (eg. /users/1)
 			return new ResponseEntity<Void> (headers, HttpStatus.CREATED);
 		}
 		catch (UserExistsException ex) {
