@@ -13,12 +13,12 @@ public class UserController {
 	@Autowired					//inject the userService
 	UserService userService;
 	
+//method to save user object to database	
+//@RequestBody: get the body of incoming request, User: type of object we are waiting for. (Spring converts body from Json to User object.
 	@PostMapping("/api/1.0/users")
-	GenericResponse createUser(@RequestBody User user) {	//method to save user object to database
+	GenericResponse createUser(@RequestBody User user) {	
 		userService.save(user);
-		GenericResponse body = new GenericResponse();
-		body.setMessage("User saved");
-		return body;
+		return new GenericResponse("User saved");
 		
 	}
 
