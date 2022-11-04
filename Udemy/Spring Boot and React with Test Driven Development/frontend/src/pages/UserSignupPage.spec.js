@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';  //for rendering the component
+import { render, cleanup, fireEvent } from '@testing-library/react';  //for rendering the component
 import '@testing-library/jest-dom/extend-expect'; //for additional extend functionality
 import UserSignup, { UserSignupPage } from './UserSignupPage';
 
@@ -39,22 +39,67 @@ describe('UserSignupPage', () => {
             expect(passwordInput.type).toBe('password');
         });
 
-        it('has input for password repeat', () => { 
+        it('has input for password repeat', () => {
             const { queryByPlaceholderText } = render(<UserSignupPage />);
             const passwordRepeat = queryByPlaceholderText('Repeat your password');
             expect(passwordRepeat).toBeInTheDocument();
         });
 
-        it('has password type for password repeat input', () => { 
+        it('has password type for password repeat input', () => {
             const { queryByPlaceholderText } = render(<UserSignupPage />);
             const passwordRepeat = queryByPlaceholderText('Repeat your password');
             expect(passwordRepeat.type).toBe('password');
         });
 
-        it('has submit button', () => { 
+        it('has submit button', () => {
             const { container } = render(<UserSignupPage />);
             const button = container.querySelector('button');
             expect(button).toBeInTheDocument();
         });
+    });
+    //second test group
+    describe('Interactions', () => {
+
+        //function to change/return new field value for target field.
+        const changeEvent = (content) => { 
+            return {target: {value: content} }
+        };
+
+        it('sets the display name value into state', () => {
+            const { queryByPlaceholderText } = render(<UserSignupPage />);
+            const displayNameInput = queryByPlaceholderText('Your display name');
+        //simulate a user input with fireEvent.
+            fireEvent.change(displayNameInput, changeEvent('my-display-name'));    //changes diplayNameInput's value to 'changeEvent's value.
+
+            expect(displayNameInput).toHaveValue('my-display-name');
+        });
+
+        it('sets the username value into state', () => {
+            const { queryByPlaceholderText } = render(<UserSignupPage />);
+            const usernameInput = queryByPlaceholderText('Your username');
+        //simulate a user input with fireEvent.
+            fireEvent.change(usernameInput, changeEvent('my-user-name'));    //changes diplayNameInput's value to 'changeEvent's value.
+
+            expect(usernameInput).toHaveValue('my-user-name');
+        });
+
+        it('sets the password value into state', () => {
+            const { queryByPlaceholderText } = render(<UserSignupPage />);
+            const passwordInput = queryByPlaceholderText('Your password');
+        //simulate a user input with fireEvent.
+            fireEvent.change(passwordInput, changeEvent('P4ssword'));    //changes diplayNameInput's value to 'changeEvent's value.
+
+            expect(passwordInput).toHaveValue('P4ssword');
+        });
+
+        it('sets the password repeat value into state', () => {
+            const { queryByPlaceholderText } = render(<UserSignupPage />);
+            const passwordRepeat = queryByPlaceholderText('Repeat your password');
+        //simulate a user input with fireEvent.
+            fireEvent.change(passwordRepeat, changeEvent('P4ssword'));    //changes diplayNameInput's value to 'changeEvent's value.
+
+            expect(passwordRepeat).toHaveValue('P4ssword');
+        });
+
     });
 });
