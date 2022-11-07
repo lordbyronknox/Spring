@@ -32,6 +32,16 @@ export class UserSignupPage extends React.Component {
         this.setState({ passwordRepeat: value }); //set the value to the password field.
     };
 
+    //function to be called when the button is clicked.
+    onClickSignup = () => {
+        const user = {
+            username: this.state.username,
+            displayName: this.state.displayName,
+            password: this.state.password
+        }
+        this.props.actions.postSignup(user);    //provide the actions object as a property (using props) to this component, 
+    };                                          // so we can execute the actions.postSignup function.
+
     render() {                    //render() = a function of  Component.
         return (                  //jsx: html is javascript code.
             <div>
@@ -53,12 +63,20 @@ export class UserSignupPage extends React.Component {
                     onChange={this.onChangePasswordRepeat}/>
                 </div>
                 <div>
-                    <button>Sign Up</button>
+                    <button onClick={this.onClickSignup}>Sign Up</button>
                 </div>
             </div>                
-        )
+        );
     }
-
 }
+
+//set default props for this component (UserSignupPage).
+UserSignupPage.defaultProps = {
+    actions: {              //if actions is 'false' (doesnt exist), then set it to an empty object.
+        postSignup: () => new Promise((resolve, reject) => {
+            resolve({}); //return empty object.
+        })
+    }
+};
 
 export default UserSignupPage;
