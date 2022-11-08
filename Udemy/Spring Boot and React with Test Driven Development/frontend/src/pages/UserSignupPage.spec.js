@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';  //for rendering the component
+import { render, cleanup, fireEvent, waitFor, waitForDomChange } from '@testing-library/react';  //for rendering the component
 import '@testing-library/jest-dom/extend-expect'; //for additional extend functionality
 import UserSignup, { UserSignupPage } from './UserSignupPage';
 
@@ -57,7 +57,7 @@ describe('UserSignupPage', () => {
             expect(button).toBeInTheDocument();
         });
     });
-
+    
     //second test group
     describe('Interactions', () => {
 
@@ -67,6 +67,15 @@ describe('UserSignupPage', () => {
         const changeEvent = (content) => {
             return { target: { value: content } }
         };
+
+const mockAsyncdelayed = () => {
+    return jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {resolve({});
+            }, 300)
+        })
+    })
+};
 
         let button, displayNameInput, usernameInput, passwordInput, passwordRepeat;
 
@@ -140,44 +149,14 @@ describe('UserSignupPage', () => {
             }
 
             setupForSubmit({ actions });    //call setupForSubmit() func and pass actions as a props.
-            //below code replaced by 'setupForSubmit()' function.
-
-            /*
-            const { container, queryByPlaceholderText } = render(
-                <UserSignupPage actions={actions} />
-            );
-
-            const displayNameInput = queryByPlaceholderText('Your display name');
-            const usernameInput = queryByPlaceholderText('Your username');
-            const passwordInput = queryByPlaceholderText('Your password');
-            const passwordRepeat = queryByPlaceholderText('Repeat your password');
-
-            fireEvent.change(displayNameInput, changeEvent('my-display-name'));
-            fireEvent.change(usernameInput, changeEvent('my-user-name'));
-            fireEvent.change(passwordInput, changeEvent('P4ssword'));
-            fireEvent.change(passwordRepeat, changeEvent('P4ssword'));
-
-            const button = container.querySelector('button');
-            */
+            
             fireEvent.click(button);
             expect(actions.postSignup).toHaveBeenCalledTimes(1); //check mock function, to be fired once.
         });
 
         it('does not throw exception when clicking the button when actions not provided in props', () => {
             setupForSubmit();
-            /*
-                        const displayNameInput = queryByPlaceholderText('Your display name');
-                        const usernameInput = queryByPlaceholderText('Your username');
-                        const passwordInput = queryByPlaceholderText('Your password');
-                        const passwordRepeat = queryByPlaceholderText('Repeat your password');
             
-                        fireEvent.change(displayNameInput, changeEvent('my-display-name'));
-                        fireEvent.change(usernameInput, changeEvent('my-user-name'));
-                        fireEvent.change(passwordInput, changeEvent('P4ssword'));
-                        fireEvent.change(passwordRepeat, changeEvent('P4ssword'));
-            
-                        const button = container.querySelector('button');
-                        */
             expect(() => fireEvent.click(button)).not.toThrow();
         });
 
@@ -195,5 +174,60 @@ describe('UserSignupPage', () => {
             }
             expect(actions.postSignup).toHaveBeenCalledWith(expectedUserObject); //check mock function, to be fired once.
         });
+
+        it('does not allow user to click Sign up button when there is an ongoing api call', () => {
+            const actions = {
+                postSignup: mockAsyncdelayed()
+            };
+            setupForSubmit({ actions });    //call setupForSubmit() func and pass actions as a props.
+            fireEvent.click(button);    //1st Click
+            fireEvent.click(button);    //2nd Click
+            expect(actions.postSignup).toHaveBeenCalledTimes(1);
+         });
+
+         it('displays spinner when there is an ongoing api call', () => {
+            const actions = {
+                postSignup: mockAsyncdelayed()
+            };
+            const {queryByText} = setupForSubmit({ actions });    //call setupForSubmit() func and pass actions as a props.
+            fireEvent.click(button);
+
+            const spinner = queryByText('Loading...');  //'loading' - from bootstrap.
+            expect(spinner).toBeInTheDocument();
+         });
+
+         //mark test function as 'async' to make 'await' available.
+         it('hode spinner when api call finishes successfully', async () => {
+            const actions = {
+                postSignup: mockAsyncdelayed()
+            };
+            const {queryByText} = setupForSubmit({ actions });    //call setupForSubmit() func and pass actions as a props.
+            fireEvent.click(button);
+
+            const spinner = queryByText('Loading...');  //'loading' - from bootstrap.
+            await waitFor(() => expect(spinner).not.toBeInTheDocument());
+         });
+
+         it('hode spinner when api call finishes with error', async () => {
+            const actions = {
+                postSignup: jest.fn().mockImplementation(() => {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            reject({
+                                response: {data: {}}
+                            });
+                        }, 300)
+                    })
+                })
+            };
+            const {queryByText} = setupForSubmit({ actions });    //call setupForSubmit() func and pass actions as a props.
+            fireEvent.click(button);
+
+            const spinner = queryByText('Loading...');  //'loading' - from bootstrap.
+            await waitFor(() => expect(spinner).not.toBeInTheDocument());
+         });
+
     });
 });
+
+console.error = () => {}; //over-ride the error with empty function.
