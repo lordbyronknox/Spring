@@ -8,7 +8,8 @@ export class UserSignupPage extends React.Component {
         username: '',
         password: '',
         passwordRepeat: '',
-    };
+        pendingApiCall: false   //changed to true when 'pendingApiCall' is called
+    };                          // by clicking button. when true, button is disabled.
 
     //function for handling changes to the field.
     //changes made to input field (in browser) generates an 'event' object.
@@ -39,9 +40,14 @@ export class UserSignupPage extends React.Component {
             displayName: this.state.displayName,
             password: this.state.password
         }
-        this.props.actions.postSignup(user);    //provide the actions object as a property (using props) to this component, 
-    };                                          // so we can execute the actions.postSignup function.
-
+        this.setState({pendingApiCall: true});
+        this.props.actions.postSignup(user).then(response => {  //when postSignup request receives a 'success' response
+            this.setState({pendingApiCall: false});             // the 'then()' func is triggered, which sets pendingApiCall to false.
+        })
+        .catch((error) => {this.setState({pendingApiCall: false});         //catch the error
+    });                                              
+    };
+    
     render() {                    //render() = a function of  Component.
         return (                  //jsx: html is javascript code.
             <div className="container">
@@ -72,7 +78,18 @@ export class UserSignupPage extends React.Component {
                     onChange={this.onChangePasswordRepeat}/>
                 </div>
                 <div className="text-center">
-                    <button className="btn btn-primary" onClick={this.onClickSignup}>Sign Up</button>
+                    <button 
+                    className="btn btn-primary" 
+                    onClick={this.onClickSignup}
+                    disabled={this.state.pendingApiCall}
+                    >
+                    {this.state.pendingApiCall && (
+                    <div className="spinner-border text-light spinner-border-sm mr-sm-1">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    )}
+                    Sign Up
+                    </button>
                 </div>
             </div>                
         );
