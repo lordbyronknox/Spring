@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;	//test runner
 
+import com.hoaxify.hoaxify.error.ApiError;
 import com.hoaxify.hoaxify.shared.GenericResponse;
 import com.hoaxify.hoaxify.user.User;
 import com.hoaxify.hoaxify.user.UserRepository;
@@ -115,9 +116,7 @@ public class UserControllerTest {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
-	public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
-		return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
-	}
+	
 	
 	@Test
 	public void postUser_whenUserHasUsernameWithLessThanRequired_receiveBadRequest() {
@@ -197,6 +196,24 @@ public class UserControllerTest {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
+	@Test
+	public void postUser_whenUserIsInvalid_receiveApiError() {
+		User user = new User();
+		ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+		assertThat(response.getBody().getUrl()).isEqualTo(API_1_0_USERS);
+	}
+	
+	@Test
+	public void postUser_whenUserIsInvalid_receiveApiErrorWithValidationErrors() {
+		User user = new User();
+		ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+		assertThat(response.getBody().getValidationErrors().size()).isEqualTo(3);
+	}
+	
+	
+	public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
+		return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
+	}
 	
 	//method to create a user
 	private User createValidUser() {
