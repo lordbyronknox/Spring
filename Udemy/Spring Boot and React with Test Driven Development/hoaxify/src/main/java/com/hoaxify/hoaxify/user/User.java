@@ -17,7 +17,7 @@ public class User {
 	@GeneratedValue				//hibernate auto-generates id numbers as users are created
 	private long id;
 	
-	@NotNull					//constraint: cant be null.
+	@NotNull(message = "{hoaxify.constraints.username.NotNull.message}")			
 	@Size(min = 4, max = 255)
 	private String username;
 	
@@ -27,7 +27,7 @@ public class User {
 	
 	@NotNull
 	@Size(min = 8, max = 255)
-	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
+	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message="{hoaxify.constraints.password.Pattern.message}")
 	private String password;
 	
 	
