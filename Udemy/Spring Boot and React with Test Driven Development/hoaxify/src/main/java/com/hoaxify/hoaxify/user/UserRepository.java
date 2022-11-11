@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 //No annotation needed - spring automatically looks for interfaces that implement spring data interfaces.
 public interface UserRepository extends JpaRepository<User, Long>{		//<type of entity, type of the Id field>
 
+	User findByUsername(String username);
+	
 }
